@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AddActivity">
+
+    <EditText
+        android:id="@+id/Nombre"
+        android:hint="Ingrese el nombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </EditText>
+
+    <EditText
+        android:id="@+id/Telefono"
+        android:layout_below="@+id/Nombre"
+        android:hint="Ponga el numero de telefono"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </EditText>
+
+    <EditText
+        android:id="@+id/Direccion"
+        android:layout_below="@+id/Telefono"
+        android:hint="Ponga la dirrecion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </EditText>
+
+    <EditText
+        android:id="@+id/Observacion"
+        android:layout_below="@+id/Direccion"
+        android:hint="Observacion del cliente"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </EditText>
+
+    <Button
+        android:id="@+id/Guardar"
+        android:text="Guardar"
+        android:layout_below="@id/Observacion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    </Button>
+
+    <Button
+    android:id="@+id/Cancelar"
+    android:text="Cancelar"
+    android:layout_width="wrap_content"
+    android:layout_alignBottom="@+id/Guardar"
+    android:layout_alignEnd="@+id/Observacion"
+    android:layout_height="wrap_content">
+    </Button>
+
+</RelativeLayout>
