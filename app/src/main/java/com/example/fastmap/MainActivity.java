@@ -1,24 +1,45 @@
 package com.example.fastmap;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.EditText;
+import android.widget.Toast;
 
-import java.util.Calendar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    private CalendarView calendarView;
+    private EditText Usuario,Contraseña;
+    private Button Entrar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        calendarView = (CalendarView) findViewById(R.id.CalendarView);
+        Usuario=(EditText)findViewById(R.id.Usuario);
+        Contraseña=(EditText)findViewById(R.id.Contraseña);
+        Entrar=(Button)findViewById(R.id.Entrar);
+
+        Entrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (Usuario.getText().toString().equals("Admin")&Contraseña.getText().toString().equals("123")) {
+                    Toast.makeText(MainActivity.this, "Usuario y Contraseña correcta", Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(MainActivity.this, "Usuario y Contraseña incorrecta", Toast.LENGTH_SHORT).show();
+                    Usuario.setText("");
+                    Contraseña.setText("");
+                    Usuario.requestFocus();
+                }
+            }
+        });
+        CalendarView calendarView = (CalendarView) findViewById(R.id.CalendarView);
         calendarView.setOnDateChangeListener((CalendarView.OnDateChangeListener) this);
     }
 
@@ -34,32 +55,26 @@ public class MainActivity extends AppCompatActivity {
 
 
         builder.setTitle("Seleciona un cliente")
-                .setItems(items, new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        if (i==0) {
-                            //actividad agregar CLiente
-                            Intent intent = new Intent(getApplication(), AddActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putInt("nombre",nombre);
+                .setItems(items, (dialogInterface, i3) -> {
+                    if (i3 ==0) {
+                        //actividad agregar CLiente
+                        Intent intent = new Intent(getApplication(), AddActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("nombre",nombre);
 
 
-                            intent.putExtras(bundle);
-                            startActivity(intent);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
 
-                        }else if(i==1){
-                            //Ver clientes
-                            Intent intent = new Intent(getApplication(), ViewEventsActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putInt("nombre",nombre);
-                            intent.putExtras(bundle);
-                            startActivity(intent);
-                        }else{
-                            return;
-                        }
-
+                    }else if(i3 ==1){
+                        //Ver clientes
+                        Intent intent = new Intent(getApplication(), ViewEventsActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("nombre",nombre);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
                     }
+
                 });
         AlertDialog dialog = builder.create();
         dialog.show();

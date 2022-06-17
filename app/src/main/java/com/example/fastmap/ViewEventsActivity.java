@@ -3,6 +3,7 @@ package com.example.fastmap;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -13,10 +14,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class ViewEventsActivity extends AppCompatActivity implements View.OnLongClickListener{
+public class ViewEventsActivity extends AppCompatActivity implements AdapterView.OnItemLongClickListener {
 
+    private SQLiteDatabase db;
     private ListView listView;
     private ArrayAdapter<String> arrayAdapter;
+    @SuppressLint("Recycle")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,6 +27,7 @@ public class ViewEventsActivity extends AppCompatActivity implements View.OnLong
 
         listView=(ListView)findViewById(R.id.ListaClientes);
         listView.setOnLongClickListener((View.OnLongClickListener) this);
+        listView.setOnItemLongClickListener((AdapterView.OnItemLongClickListener) this);
 
         Bundle bundle = getIntent().getExtras();
         int nombres;
@@ -31,7 +35,8 @@ public class ViewEventsActivity extends AppCompatActivity implements View.OnLong
         nombres=bundle.getInt("nombres");
 
         BDSQLite bd = new BDSQLite((getApplicationContext()),"Agenda", null,1);
-        SQLiteDatabase db = bd.getReadableDatabase();
+         db = bd.getReadableDatabase();
+
         String sql= "select * from clientes where nombre";
         Cursor c;
         String nombre, telefono, direccion, observacion;
@@ -44,6 +49,7 @@ public class ViewEventsActivity extends AppCompatActivity implements View.OnLong
                     telefono = c.getString(1);
                     direccion = c.getString(2);
                     observacion = c.getString(3);
+                    arrayAdapter.add (nombre+", "+telefono+", "+direccion+", "+observacion+"") ;
                 } while (c.moveToNext());
                 listView.setAdapter(arrayAdapter);
             } else {
@@ -53,25 +59,37 @@ public class ViewEventsActivity extends AppCompatActivity implements View.OnLong
             Toast.makeText(getApplication(), "Error:"+ex.getMessage(),Toast.LENGTH_SHORT).show();
             this.finish();
     }
-        listView.setOnLongClickListener(this);
+        listView.setOnLongClickListener((View.OnLongClickListener) this);
 }
+
+    private void eliminar (String dato) {
+        String sql = "delete from clientes where concat(nombreCliente,',',telefono,','," +
+                "direccion,',', observacion)-'" + dato + "'";
+        try {
+            arrayAdapter.remove(dato);
+            listView.setAdapter(arrayAdapter);
+            db.execSQL(sql);
+            Toast.makeText(getApplication(),"Cliente eliminado",Toast.LENGTH_SHORT).show();
+        } catch (Exception ex) {
+            Toast.makeText(getApplication(), "Error: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
-    public boolean onLongClick(View view) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        CharSequence []items = new  CharSequence[2];
-        items[0]="Eliminar Cliente";
-        items[1]="Cancelar";
-        builder.setTitle("Eliminar evento")
-                .setItems(items, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        if(i==0) {
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            CharSequence []items = new  CharSequence[2];
+            items[0]="Eliminar Cliente";
+            items[1]="Cancelar";
+            builder.setTitle("Eliminar evento")
+                    .setItems(items, (dialogInterface, i1) -> {
+                        if(i1 ==0) {
                             //eliminar el cliente
+                            eliminar(adapterView.getItemAtPosition(i1).toString());
                         }
-                    }
-                });
-        AlertDialog dialog = builder.create();
-        dialog.show();
+                    });
+            AlertDialog dialog = builder.create();
+            dialog.show();
         return false;
     }
 }
